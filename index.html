@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <title>Makifind</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="shell">
+    <label class="search">
+      <svg class="search-icon" viewBox="0 0 20 20"><circle cx="9" cy="9" r="5.5"/><path d="M13.2 13.2 17 17"/></svg>
+      <input id="q" type="text" placeholder="Найти эффект…" spellcheck="false" autocomplete="off" autofocus>
+      <span id="count" class="count"></span>
+    </label>
+
+    <nav class="chips">
+      <button data-filter="all" class="on">Все</button>
+      <button data-filter="fav">Избранное</button>
+      <button data-filter="recent">Недавние</button>
+      <span class="spacer"></span>
+      <button id="refresh" class="ghost" title="Перечитать список эффектов (после установки плагинов)">
+        <svg viewBox="0 0 20 20"><path d="M16 10a6 6 0 1 1-1.8-4.3M16 3.5v3.2h-3.2"/></svg>
+      </button>
+    </nav>
+
+    <ul id="list" class="list" role="listbox"></ul>
+
+    <footer class="hints">
+      <span><kbd>↑</kbd><kbd>↓</kbd> выбор</span>
+      <span><kbd>Enter</kbd> применить</span>
+      <span><kbd>Shift</kbd>+<kbd>Enter</kbd> на корр. слой</span>
+      <span><kbd>Ctrl</kbd>+<kbd>S</kbd> в избранное</span>
+    </footer>
+  </div>
+  <div id="toast" class="toast"></div>
+  <script src="js/search.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
