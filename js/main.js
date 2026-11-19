@@ -40,19 +40,19 @@
   // ---------- host ----------
 
   function evalHost(script, done) {
-    if (!cep) { toast("Панель открыта не в After Effects", true); return; }
+    if (!cep) { toast("The panel is not running inside After Effects", true); return; }
     cep.evalScript(script, function (res) { done(String(res || "")); });
   }
 
   var ERRORS = {
-    nocomp: "Откройте композицию",
-    nolayers: "Выделите слой (или Shift+Enter — корректирующий слой)",
-    cantadd: "Этот эффект нельзя добавить к выделенным слоям"
+    nocomp: "Open a composition",
+    nolayers: "Select a layer (or Shift+Enter for an adjustment layer)",
+    cantadd: "This effect can't be added to the selected layers"
   };
 
   function hostError(res) {
     var code = res.indexOf("err:") === 0 ? res.slice(4) : res;
-    return ERRORS[code] || ("Ошибка: " + (code || "нет ответа от AE"));
+    return ERRORS[code] || ("Error: " + (code || "no response from AE"));
   }
 
   function loadEffects(force) {
@@ -76,7 +76,7 @@
       }).sort(function (a, b) { return a.name.localeCompare(b.name); });
       save(CACHE_KEY, effects);
       render();
-      if (force) toast("Эффектов найдено: " + effects.length);
+      if (force) toast("Effects found: " + effects.length);
     });
     if (!cep) refreshEl.classList.remove("busy");
   }
@@ -147,7 +147,7 @@
     return '<li class="row' + (i === sel ? " sel" : "") + '" data-i="' + i + '" role="option" style="animation-delay:' + Math.min(i, 12) * 12 + 'ms">' +
       '<span class="name">' + highlight(r.e.name, r.hits) + "</span>" +
       '<span class="cat">' + escapeHtml(r.e.cat) + "</span>" +
-      '<button class="star' + (fav ? " on" : "") + '" data-star="' + i + '" title="Избранное (Ctrl+S)">' + STAR_SVG + "</button>" +
+      '<button class="star' + (fav ? " on" : "") + '" data-star="' + i + '" title="Favorite (Ctrl+S)">' + STAR_SVG + "</button>" +
       "</li>";
   }
 
@@ -159,13 +159,13 @@
     countEl.textContent = results.length ? results.length : "";
 
     if (!effects.length) {
-      listEl.innerHTML = '<li class="empty"><b>Загружаю эффекты…</b>Если список не появляется — откройте панель в After Effects.</li>';
+      listEl.innerHTML = '<li class="empty"><b>Loading effects…</b>If the list does not appear, open the panel in After Effects.</li>';
       return;
     }
     if (!rows.length) {
-      var msg = filter === "fav" && !query ? "<b>Пока пусто</b>Наведите на эффект и нажмите ★ или Ctrl+S"
-              : filter === "recent" && !query ? "<b>Пока пусто</b>Здесь появятся эффекты, которые вы применяли"
-              : "<b>Ничего не найдено</b>Попробуйте часть слова или английское название";
+      var msg = filter === "fav" && !query ? "<b>Nothing here yet</b>Hover an effect and press ★ or Ctrl+S"
+              : filter === "recent" && !query ? "<b>Nothing here yet</b>Effects you apply will show up here"
+              : "<b>Nothing found</b>Try part of a word or another name";
       listEl.innerHTML = '<li class="empty">' + msg + "</li>";
       return;
     }
@@ -174,8 +174,8 @@
     var topCount = results.topCount;
     rows.forEach(function (r, i) {
       if (!query && filter === "all" && topCount) {
-        if (i === 0) html += '<li class="group">Избранное и недавние</li>';
-        if (i === topCount) html += '<li class="group">Все эффекты</li>';
+        if (i === 0) html += '<li class="group">Favorites and recent</li>';
+        if (i === topCount) html += '<li class="group">All effects</li>';
       }
       html += rowHtml(r, i);
     });
@@ -211,7 +211,7 @@
       usage[e.match] = { n: u.n + 1, t: Date.now() };
       save(USAGE_KEY, usage);
       var n = +res.slice(3);
-      toast(e.name + (asAdjustment ? " → новый корректирующий слой" : n > 1 ? " → слоёв: " + n : " ✓"));
+      toast(e.name + (asAdjustment ? " → new adjustment layer" : n > 1 ? " → layers: " + n : " ✓"));
       qEl.select();
     });
   }
@@ -224,7 +224,7 @@
     save(FAV_KEY, favorites);
     var star = listEl.querySelector('[data-star="' + i + '"]');
     if (star) star.classList.toggle("on", !!favorites[r.e.match]);
-    toast(favorites[r.e.match] ? "★ " + r.e.name : "Убрано из избранного");
+    toast(favorites[r.e.match] ? "★ " + r.e.name : "Removed from favorites");
   }
 
   function setFilter(f) {

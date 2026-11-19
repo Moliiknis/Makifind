@@ -1,6 +1,6 @@
 ﻿; Inno Setup 6 script. Build with ..\build-installer.ps1
 #define AppName "Makifind"
-#define AppVersion "1.0.0"
+#define AppVersion "1.0.1"
 #define RepoUrl "https://github.com/Moliiknis/Makifind"
 ; Overridable for tests: ISCC /DPriv=lowest /DPanelRoot=C:\some\dir
 #ifndef Priv
@@ -30,18 +30,16 @@ PrivilegesRequired={#Priv}
 DisableProgramGroupPage=yes
 UsedUserAreasWarning=no
 CloseApplications=yes
-ShowLanguageDialog=auto
+ShowLanguageDialog=no
 DefaultDirName={#PanelRoot}\{#AppName}
 DisableDirPage=yes
 UninstallFilesDir={app}\.uninstall
 
 [Languages]
 Name: "en"; MessagesFile: "compiler:Default.isl"
-Name: "ru"; MessagesFile: "compiler:Languages\Russian.isl"
 
 [Messages]
-en.FinishedLabelNoIcons=[name] is installed. Restart After Effects and open Window > Extensions > Makifind.
-ru.FinishedLabelNoIcons=[name] установлен. Перезапустите After Effects и откройте Окно → Расширения → Makifind.
+FinishedLabelNoIcons=[name] is installed. Restart After Effects and open Window > Extensions > Makifind.
 
 [Files]
 Source: "..\CSXS\*"; DestDir: "{app}\CSXS"; Flags: ignoreversion recursesubdirs createallsubdirs
