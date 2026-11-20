@@ -11,6 +11,8 @@
   --a3: #f472b6; /* pink */
   --star: #fbbf24;
   --radius: 10px;
+  --mi-accent: var(--a2);
+  --mi-glow: rgba(167, 139, 250, 0.14);
 }
 
 @property --spin {
@@ -272,6 +274,27 @@ kbd {
 }
 .toast.show { opacity: 1; transform: translate(-50%, 0); }
 .toast.err { border-color: rgba(244, 114, 182, 0.6); box-shadow: 0 0 20px -6px var(--a3); }
+
+/* ---------- interface settings ---------- */
+
+.gear-slot { display: flex; margin-right: -6px; }
+
+.ui-hide-count .count,
+.ui-hide-filters .chips [data-filter],
+.ui-hide-refresh #refresh,
+.ui-hide-filters.ui-hide-refresh .chips,
+.ui-hide-groups .group,
+.ui-hide-category .cat,
+.ui-hide-stars .star:not(.on),
+.ui-hide-hints .hints { display: none; }
+/* Favorites keep their star even when stars are hidden, so the list still tells them apart. */
+.ui-hide-stars .star.on { opacity: 0.8; pointer-events: none; }
+
+[data-density="compact"] .shell { gap: 5px; padding: 6px; }
+[data-density="compact"] .search { height: 30px; padding: 0 9px; }
+[data-density="compact"] .row { height: 25px; padding: 0 8px; border-radius: 6px; }
+[data-density="compact"] .group { padding: 5px 8px 2px; }
+[data-density="compact"] .chips button { height: 21px; }
 
 @media (max-width: 300px) {
   .hints { display: none; }

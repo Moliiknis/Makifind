@@ -292,6 +292,42 @@
     toastTimer = setTimeout(function () { toastEl.classList.remove("show"); }, 2000);
   }
 
+  // ---------- interface (Classic / Minimal / custom) ----------
+
+  function accent(id, label, a1, a2, a3, rgb2) {
+    return {
+      id: id, label: label, swatch: "linear-gradient(135deg, " + a1 + ", " + a2 + " 55%, " + a3 + ")",
+      vars: { "--a1": a1, "--a2": a2, "--a3": a3, "--mi-accent": a2, "--mi-glow": "rgba(" + rgb2 + ", 0.14)" }
+    };
+  }
+
+  MakiInterface.init({
+    key: "makifind.interface.v1",
+    title: "Makifind",
+    mount: "#gear-slot",
+    options: [
+      { id: "count", label: "Result count" },
+      { id: "filters", label: "All / Favorites / Recent" },
+      { id: "refresh", label: "Refresh button" },
+      { id: "groups", label: "Group headers" },
+      { id: "category", label: "Effect categories" },
+      { id: "stars", label: "Favorite stars" },
+      { id: "hints", label: "Keyboard hints" }
+    ],
+    presets: {
+      classic: { density: "comfortable", show: {} },
+      minimal: { density: "compact", show: { count: false, filters: false, refresh: false, groups: false, category: false, stars: false, hints: false } }
+    },
+    accents: [
+      { id: "default", label: "Aurora (default)", swatch: "linear-gradient(135deg, #6ee7f9, #a78bfa 55%, #f472b6)", vars: {} },
+      accent("ocean", "Ocean", "#67e8f9", "#3b82f6", "#6366f1", "59, 130, 246"),
+      accent("mint", "Mint", "#86efac", "#2dd4bf", "#38bdf8", "45, 212, 191"),
+      accent("sunset", "Sunset", "#fde68a", "#fb923c", "#f43f5e", "251, 146, 60"),
+      accent("rose", "Rose", "#f9a8d4", "#f472b6", "#c084fc", "244, 114, 182"),
+      accent("mono", "Mono", "#f4f4f5", "#a1a1aa", "#71717a", "161, 161, 170")
+    ]
+  });
+
   // ---------- init ----------
 
   render();

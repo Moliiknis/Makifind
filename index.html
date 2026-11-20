@@ -1,9 +1,10 @@
 <!doctype html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <title>Makifind</title>
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/interface.css">
 </head>
 <body>
   <div class="shell">
@@ -11,6 +12,7 @@
       <svg class="search-icon" viewBox="0 0 20 20"><circle cx="9" cy="9" r="5.5"/><path d="M13.2 13.2 17 17"/></svg>
       <input id="q" type="text" placeholder="Find an effect…" spellcheck="false" autocomplete="off" autofocus>
       <span id="count" class="count"></span>
+      <span id="gear-slot" class="gear-slot"></span>
     </label>
 
     <nav class="chips">
@@ -33,6 +35,7 @@
     </footer>
   </div>
   <div id="toast" class="toast"></div>
+  <script src="js/interface.js"></script>
   <script src="js/search.js"></script>
   <script src="js/main.js"></script>
 </body>
