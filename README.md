@@ -1,4 +1,16 @@
+<div align="center">
+  
 # Makifind
+
+**Quick effect search for After Effects · Быстрый поиск эффектов в After Effects**
+
+[![Release](https://img.shields.io/github/v/release/Moliiknis/Makifind?style=for-the-badge)](https://github.com/Moliiknis/Makifind/releases/latest)
+[![Downloads](https://img.shields.io/github/downloads/Moliiknis/Makifind/total?style=for-the-badge)](https://github.com/Moliiknis/Makifind/releases)
+![After Effects](https://img.shields.io/badge/After_Effects-2021%2B-9999FF?style=for-the-badge&logo=adobeaftereffects&logoColor=white)
+![Windows](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge)
+[![License](https://img.shields.io/badge/License-PolyForm_NC-lightgrey?style=for-the-badge)](LICENSE.md)
+
+<img src="assets/demo.gif" width="700" alt="Makifind demo">
 
 [English](#english) · [Русский](#русский)
 
@@ -67,3 +79,6 @@ Windows может показать предупреждение SmartScreen, п
 ### Лицензия
 
 [PolyForm Noncommercial 1.0.0](LICENSE.md): бесплатно для личного и любого некоммерческого использования, можно изменять и делиться. Коммерческое использование (продажа, платные заказы, использование в компании ради прибыли) этой лицензией не разрешено.
+
+</div>
+
