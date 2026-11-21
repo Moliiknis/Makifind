@@ -3,24 +3,27 @@
 <head>
   <meta charset="utf-8">
   <title>Makifind</title>
+  <link rel="stylesheet" href="css/ae.css">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/interface.css">
 </head>
 <body>
   <div class="shell">
-    <label class="search">
-      <svg class="search-icon" viewBox="0 0 20 20"><circle cx="9" cy="9" r="5.5"/><path d="M13.2 13.2 17 17"/></svg>
-      <input id="q" type="text" placeholder="Find an effect…" spellcheck="false" autocomplete="off" autofocus>
-      <span id="count" class="count"></span>
+    <div class="search-row">
+      <label class="search ae-field">
+        <svg class="search-icon" viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5"/><path d="M13 13l4.5 4.5"/></svg>
+        <input id="q" type="text" placeholder="Find an effect" spellcheck="false" autocomplete="off" autofocus>
+        <span id="count" class="count"></span>
+      </label>
       <span id="gear-slot" class="gear-slot"></span>
-    </label>
+    </div>
 
-    <nav class="chips">
+    <nav class="chips ae-tabs">
       <button data-filter="all" class="on">All</button>
       <button data-filter="fav">Favorites</button>
       <button data-filter="recent">Recent</button>
       <span class="spacer"></span>
-      <button id="refresh" class="ghost" title="Reload the effect list (after installing plug-ins)">
+      <button id="refresh" class="ae-icon" title="Reload the effect list (after installing plug-ins)">
         <svg viewBox="0 0 20 20"><path d="M16 10a6 6 0 1 1-1.8-4.3M16 3.5v3.2h-3.2"/></svg>
       </button>
     </nav>

@@ -1,0 +1,233 @@
+/*
+ * Makimchi AE theme: the look of After Effects' Effect Controls, shared by every Makimchi panel.
+ * Flat greys, light-grey labels, blue values. The accent group (--accent, --value, --select…)
+ * is what the Interface settings recolor.
+ */
+:root {
+  --bg: #232323;
+  --bg-bar: #2b2b2b;
+  --bg-field: #1b1b1b;
+  --bg-btn: #323232;
+  --bg-btn-hi: #3b3b3b;
+  --bg-pop: #2a2a2a;
+  --bg-on: #3d3d3d;
+  --line: #383838;
+  --line-strong: #474747;
+  --line-dark: #1a1a1a;
+  --text: #d4d4d4;
+  --text-hi: #ececec;
+  --label: #cfcfcf;
+  --dim: #a8a8a8;
+  --faint: #8a8a8a;
+  --twirl: #9a9a9a;
+  --good: #4cc38a;
+  --warn: #e8b92c;
+  --bad: #e5675f;
+
+  --accent: #2680eb;
+  --accent-on: #ffffff;
+  --value: #3d9bff;
+  --select: #2b4562;
+  --select-line: #3b6ea8;
+
+  --radius: 3px;
+  --row: 23px;
+  --ctl: 22px;
+  --pad: 10px;
+  --font: "Segoe UI", system-ui, -apple-system, sans-serif;
+
+  /* The Interface sheet follows the accent. */
+  --mi-accent: var(--accent);
+  --mi-glow: rgba(38, 128, 235, 0.16);
+}
+
+html[data-density="compact"] {
+  --row: 20px;
+  --ctl: 20px;
+  --pad: 7px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font: 12px/1.35 var(--font);
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+button, input, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+button:disabled { opacity: 0.45; cursor: default; }
+:focus { outline: none; }
+:focus-visible { outline: 1px solid var(--value); outline-offset: 1px; }
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #3f3f3f; border: 2px solid var(--bg); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { background: #4f4f4f; }
+
+/* ---------- buttons ---------- */
+
+.ae-btn {
+  height: var(--ctl);
+  padding: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid #4a4a4a;
+  border-radius: var(--radius);
+  background: var(--bg-btn);
+  color: #e2e2e2;
+  white-space: nowrap;
+}
+.ae-btn:hover:not(:disabled) { background: var(--bg-btn-hi); }
+.ae-btn:active:not(:disabled) { background: #2c2c2c; }
+.ae-btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-on); font-weight: 600; }
+.ae-btn.primary:hover:not(:disabled) { filter: brightness(1.1); background: var(--accent); }
+.ae-btn.ghost { background: transparent; border-color: transparent; color: var(--label); }
+.ae-btn.ghost:hover:not(:disabled) { background: var(--bg-btn); }
+.ae-btn.on { background: var(--bg-on); border-color: #5a5a5a; color: #f0f0f0; }
+.ae-btn svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+
+.ae-icon {
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  display: inline-grid;
+  place-items: center;
+  border: 0;
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--dim);
+}
+.ae-icon:hover:not(:disabled) { background: var(--bg-btn); color: var(--text-hi); }
+.ae-icon svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ---------- fields ---------- */
+
+.ae-field {
+  height: var(--ctl);
+  padding: 0 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-field);
+  border: 1px solid #3e3e3e;
+  border-radius: var(--radius);
+  color: var(--text);
+}
+.ae-field:focus-within { border-color: var(--accent); }
+.ae-field input { flex: 1; min-width: 0; height: 100%; padding: 0; background: transparent; border: 0; outline: 0; color: var(--text-hi); user-select: text; }
+.ae-field input::placeholder { color: var(--faint); }
+.ae-field svg { width: 11px; height: 11px; flex: none; fill: none; stroke: var(--dim); stroke-width: 1.8; stroke-linecap: round; }
+
+select.ae-select {
+  height: 20px;
+  min-width: 0;
+  padding: 0 22px 0 7px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='6'%3E%3Cpath d='M1 1l3.5 3.5L8 1' fill='none' stroke='%23b5b5b5' stroke-width='1.4'/%3E%3C/svg%3E") no-repeat right 7px center,
+    var(--bg-pop);
+  color: #e2e2e2;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+}
+select.ae-select:hover { border-color: #5a5a5a; }
+select.ae-select:focus { border-color: var(--accent); }
+select.ae-select option, select.ae-select optgroup { background: #2a2a2a; color: #e2e2e2; }
+
+/* Segmented switch (In · In/Out · Out, ×2 ×4 ×8…). */
+.ae-seg { display: flex; height: var(--ctl); border: 1px solid var(--line-strong); border-radius: var(--radius); overflow: hidden; }
+.ae-seg button { flex: 1; min-width: 0; padding: 0 6px; border: 0; border-left: 1px solid var(--line-strong); background: transparent; color: var(--dim); }
+.ae-seg button:first-child { border-left: 0; }
+.ae-seg button:hover { color: var(--text-hi); background: #2c2c2c; }
+.ae-seg button.on { background: var(--bg-on); color: #f0f0f0; }
+
+/* Checkbox in the AE way: a filled accent square with a white tick. */
+.ae-check {
+  width: 14px;
+  height: 14px;
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  border: 1px solid #6a6a6a;
+  border-radius: 2px;
+  background: transparent;
+}
+.ae-check svg { width: 10px; height: 8px; fill: none; stroke: var(--accent-on); stroke-width: 1.7; opacity: 0; }
+.on > .ae-check, .ae-check.on { background: var(--accent); border-color: var(--accent); }
+.on > .ae-check svg, .ae-check.on svg { opacity: 1; }
+
+/* Underlined text tabs. */
+.ae-tabs { display: flex; gap: 14px; border-bottom: 1px solid var(--line); }
+.ae-tabs button { padding: 2px 2px 4px; margin-bottom: -1px; border: 0; border-bottom: 2px solid transparent; background: transparent; color: var(--dim); }
+.ae-tabs button:hover { color: var(--text-hi); }
+.ae-tabs button.on { color: #f0f0f0; border-bottom-color: var(--accent); }
+
+/* ---------- twirls, rows, values ---------- */
+
+.ae-twirl { width: 8px; height: 8px; flex: none; fill: var(--twirl); transition: transform 0.12s; }
+.open > * > .ae-twirl, .ae-twirl.open { transform: rotate(90deg); }
+
+.ae-section-head {
+  width: 100%;
+  height: calc(var(--row) + 1px);
+  padding: 0 var(--pad);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 0;
+  border-top: 1px solid #2e2e2e;
+  background: transparent;
+  color: var(--text-hi);
+  font-weight: 600;
+  text-align: left;
+}
+.ae-section-head:hover { background: #272727; }
+.ae-section-head em { margin-left: auto; font-style: normal; font-weight: 400; font-size: 11px; color: var(--dim); }
+
+.ae-hot { color: var(--value); cursor: ew-resize; font-variant-numeric: tabular-nums; }
+.ae-dim { color: var(--dim); font-size: 11px; }
+.ae-faint { color: var(--faint); font-size: 11px; }
+
+kbd {
+  display: inline-block;
+  min-width: 14px;
+  padding: 0 4px;
+  border: 1px solid var(--line-strong);
+  border-radius: 2px;
+  background: var(--bg-pop);
+  color: var(--label);
+  font: 10.5px/15px var(--font);
+  text-align: center;
+}
+
+/* ---------- toast ---------- */
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 14px;
+  transform: translate(-50%, 6px);
+  padding: 4px 10px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  background: #1a1a1a;
+  color: var(--text-hi);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+  opacity: 0;
+  pointer-events: none;
+  white-space: nowrap;
+  transition: opacity 0.15s, transform 0.15s;
+  z-index: 900;
+}
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+.toast.err { border-color: var(--bad); }

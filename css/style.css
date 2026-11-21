@@ -1,129 +1,28 @@
-:root {
-  --bg: #17171c;
-  --panel: rgba(255, 255, 255, 0.035);
-  --panel-hi: rgba(255, 255, 255, 0.07);
-  --border: rgba(255, 255, 255, 0.08);
-  --text: #e8e8ef;
-  --muted: #8d8d9c;
-  --faint: #5c5c6a;
-  --a1: #6ee7f9; /* cyan */
-  --a2: #a78bfa; /* violet */
-  --a3: #f472b6; /* pink */
-  --star: #fbbf24;
-  --radius: 10px;
-  --mi-accent: var(--a2);
-  --mi-glow: rgba(167, 139, 250, 0.14);
-}
-
-@property --spin {
-  syntax: "<angle>";
-  initial-value: 0deg;
-  inherits: false;
-}
-
-* { box-sizing: border-box; margin: 0; padding: 0; }
-
-html, body {
-  height: 100%;
-  overflow: hidden;
-  color: var(--text);
-  font: 12px/1.35 "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
-  background:
-    radial-gradient(120% 60% at 0% 0%, rgba(110, 231, 249, 0.10), transparent 60%),
-    radial-gradient(120% 60% at 100% 100%, rgba(167, 139, 250, 0.12), transparent 60%),
-    var(--bg);
-  user-select: none;
-}
-
-button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+/* Makifind layout on top of the AE theme (ae.css). */
 
 .shell {
   height: 100%;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 10px;
+  gap: 6px;
+  padding: 6px 0 0;
 }
 
-/* ---------- search with animated glow ring ---------- */
+/* ---------- search ---------- */
 
-.search {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  height: 38px;
-  padding: 0 12px;
-  border-radius: var(--radius);
-  background: rgba(0, 0, 0, 0.35);
-  isolation: isolate;
-  cursor: text;
-}
-
-/* Gradient border: a spinning conic gradient masked down to a 1.5px ring. */
-.search::before,
-.search::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  padding: 1.5px;
-  background: conic-gradient(from var(--spin), var(--a1), var(--a2), var(--a3), var(--a1));
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  opacity: 0.35;
-  z-index: -1;
-  transition: opacity 0.25s;
-  animation: spin 6s linear infinite;
-}
-.search::after {
-  filter: blur(10px);
-  opacity: 0;
-}
-.search:focus-within::before { opacity: 1; }
-.search:focus-within::after { opacity: 0.55; }
-
-@keyframes spin { to { --spin: 360deg; } }
-
-.search-icon { width: 16px; height: 16px; flex: none; fill: none; stroke: var(--muted); stroke-width: 1.8; stroke-linecap: round; }
-.search:focus-within .search-icon { stroke: var(--a1); }
-
-#q {
-  flex: 1;
-  min-width: 0;
-  height: 100%;
-  background: none;
-  border: 0;
-  outline: 0;
-  color: var(--text);
-  font-size: 14px;
-  user-select: text;
-}
-#q::placeholder { color: var(--faint); }
-
+.search-row { padding: 0 6px; display: flex; gap: 6px; align-items: center; }
+.search { flex: 1; height: 24px; cursor: text; }
+.search .search-icon { width: 12px; height: 12px; }
 .count { color: var(--faint); font-size: 11px; font-variant-numeric: tabular-nums; }
+.gear-slot { display: flex; }
 
-/* ---------- filter chips ---------- */
+/* ---------- filters ---------- */
 
-.chips { display: flex; align-items: center; gap: 4px; }
+.chips { margin: 0 8px; display: flex; align-items: flex-end; justify-content: space-between; }
 .chips .spacer { flex: 1; }
-.chips button {
-  height: 24px;
-  padding: 0 10px;
-  border-radius: 999px;
-  color: var(--muted);
-  border: 1px solid transparent;
-  transition: color 0.15s, background 0.15s, border-color 0.15s;
-}
-.chips button:hover { color: var(--text); background: var(--panel); }
-.chips button.on {
-  color: var(--text);
-  background: linear-gradient(90deg, rgba(110, 231, 249, 0.14), rgba(167, 139, 250, 0.14));
-  border-color: rgba(167, 139, 250, 0.35);
-}
-.chips .ghost { width: 26px; padding: 0; display: grid; place-items: center; }
-.chips .ghost svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
-.chips .ghost.busy svg { animation: rot 0.8s linear infinite; }
+.chips #refresh { margin-bottom: 2px; width: 20px; height: 20px; padding: 0; border: 0; }
+.chips #refresh svg { width: 12px; height: 12px; stroke-width: 1.8; }
+.chips #refresh.busy svg { animation: rot 0.8s linear infinite; }
 @keyframes rot { to { transform: rotate(360deg); } }
 
 /* ---------- results ---------- */
@@ -133,151 +32,74 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
   min-height: 0;
   overflow-y: auto;
   list-style: none;
-  padding: 2px;
-  margin: 0 -2px;
-  scroll-padding: 6px;
+  margin: 0;
+  padding: 0;
+  scroll-padding: 4px;
 }
-.list::-webkit-scrollbar { width: 6px; }
-.list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
 .group {
-  padding: 8px 10px 4px;
-  color: var(--faint);
-  font-size: 10px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  height: var(--row);
+  padding: 0 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  color: var(--text-hi);
 }
+.group svg { width: 8px; height: 8px; fill: var(--twirl); }
 
 .row {
-  position: relative;
+  height: calc(var(--row) - 1px);
+  padding: 0 8px 0 22px;
   display: flex;
   align-items: center;
   gap: 8px;
-  height: 32px;
-  padding: 0 10px;
-  border-radius: 8px;
   cursor: pointer;
-  animation: rise 0.18s ease-out both;
 }
-@keyframes rise { from { opacity: 0; transform: translateY(3px); } }
+.row:hover { background: #2a2a2a; }
+.row.sel { background: var(--select); color: #fff; }
 
-.row:hover { background: var(--panel); }
+.name { flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.name mark { background: none; color: var(--value); font-weight: 600; }
+.row.sel .name mark { color: #fff; text-decoration: underline; text-underline-offset: 2px; }
 
-.row.sel {
-  background: linear-gradient(90deg, rgba(110, 231, 249, 0.13), rgba(167, 139, 250, 0.10) 60%, transparent);
-  box-shadow:
-    inset 0 0 0 1px rgba(167, 139, 250, 0.28),
-    0 0 18px -6px rgba(167, 139, 250, 0.55);
-}
-.row.sel::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 7px;
-  bottom: 7px;
-  width: 3px;
-  border-radius: 3px;
-  background: linear-gradient(var(--a1), var(--a2));
-  box-shadow: 0 0 10px var(--a2);
-}
-
-.name {
-  flex: 1;
-  min-width: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  font-size: 13px;
-}
-.name mark {
-  background: none;
-  color: var(--a1);
-  font-weight: 600;
-  text-shadow: 0 0 8px rgba(110, 231, 249, 0.55);
-}
-.row.sel .name mark { color: #fff; text-shadow: 0 0 10px var(--a1), 0 0 2px var(--a1); }
-
-.cat {
-  flex: none;
-  max-width: 45%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  color: var(--faint);
-  font-size: 11px;
-}
-.row.sel .cat { color: var(--muted); }
+.cat { flex: none; max-width: 45%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; color: var(--faint); font-size: 11px; }
+.row.sel .cat { color: rgba(255, 255, 255, 0.7); }
 
 .star {
-  flex: none;
   width: 18px;
   height: 18px;
+  flex: none;
+  padding: 0;
   display: grid;
   place-items: center;
-  border-radius: 4px;
+  border: 0;
+  border-radius: 2px;
+  background: transparent;
   color: var(--faint);
   opacity: 0;
-  transition: opacity 0.12s, color 0.12s;
 }
-.star svg { width: 12px; height: 12px; fill: currentColor; }
+.star svg { width: 11px; height: 11px; fill: currentColor; }
 .row:hover .star, .row.sel .star { opacity: 1; }
-.star.on { opacity: 1; color: var(--star); filter: drop-shadow(0 0 4px rgba(251, 191, 36, 0.6)); }
-.star:hover { background: var(--panel-hi); }
+.star.on { opacity: 1; color: var(--warn); }
+.star:hover { background: rgba(255, 255, 255, 0.08); }
 
-.empty {
-  padding: 28px 12px;
-  text-align: center;
-  color: var(--muted);
-}
-.empty b { display: block; margin-bottom: 4px; color: var(--text); font-weight: 600; }
+.empty { padding: 16px 12px; color: var(--dim); text-align: center; list-style: none; }
+.empty b { display: block; margin-bottom: 3px; color: var(--text-hi); font-weight: 600; }
 
 /* ---------- footer ---------- */
 
 .hints {
+  padding: 6px 8px 8px;
   display: flex;
   flex-wrap: wrap;
   gap: 4px 12px;
-  padding-top: 6px;
-  border-top: 1px solid var(--border);
-  color: var(--faint);
-  font-size: 10.5px;
-}
-kbd {
-  display: inline-block;
-  min-width: 16px;
-  padding: 0 4px;
-  margin-right: 2px;
-  border-radius: 4px;
-  border: 1px solid var(--border);
-  background: var(--panel);
-  color: var(--muted);
-  font: 10px/15px "Segoe UI", sans-serif;
-  text-align: center;
+  border-top: 1px solid #333;
+  color: var(--dim);
+  font-size: 11px;
 }
 
-/* ---------- toast ---------- */
-
-.toast {
-  position: fixed;
-  left: 50%;
-  bottom: 46px;
-  transform: translate(-50%, 6px);
-  padding: 6px 12px;
-  border-radius: 8px;
-  background: rgba(20, 20, 26, 0.92);
-  border: 1px solid rgba(167, 139, 250, 0.4);
-  box-shadow: 0 0 20px -6px var(--a2);
-  opacity: 0;
-  pointer-events: none;
-  white-space: nowrap;
-  transition: opacity 0.15s, transform 0.15s;
-}
-.toast.show { opacity: 1; transform: translate(-50%, 0); }
-.toast.err { border-color: rgba(244, 114, 182, 0.6); box-shadow: 0 0 20px -6px var(--a3); }
-
-/* ---------- interface settings ---------- */
-
-.gear-slot { display: flex; margin-right: -6px; }
+/* ---------- interface settings (Classic / Minimal / custom) ---------- */
 
 .ui-hide-count .count,
 .ui-hide-filters .chips [data-filter],
@@ -289,12 +111,12 @@ kbd {
 .ui-hide-hints .hints { display: none; }
 /* Favorites keep their star even when stars are hidden, so the list still tells them apart. */
 .ui-hide-stars .star.on { opacity: 0.8; pointer-events: none; }
+.ui-hide-groups .row { padding-left: 8px; }
+.ui-hide-filters .chips { border-bottom: 0; justify-content: flex-end; }
 
-[data-density="compact"] .shell { gap: 5px; padding: 6px; }
-[data-density="compact"] .search { height: 30px; padding: 0 9px; }
-[data-density="compact"] .row { height: 25px; padding: 0 8px; border-radius: 6px; }
-[data-density="compact"] .group { padding: 5px 8px 2px; }
-[data-density="compact"] .chips button { height: 21px; }
+html[data-density="compact"] .shell { gap: 4px; padding-top: 4px; }
+html[data-density="compact"] .search-row { padding: 0 4px; }
+html[data-density="compact"] .search { height: 22px; }
 
 @media (max-width: 300px) {
   .hints { display: none; }

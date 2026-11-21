@@ -140,6 +140,7 @@
     return out;
   }
 
+  var TWIRL = '<svg viewBox="0 0 8 8" aria-hidden="true"><path d="M0 1l4 6 4-6z"/></svg>';
   var STAR_SVG = '<svg viewBox="0 0 20 20"><path d="M10 1.8l2.5 5.2 5.7.8-4.1 4 1 5.6L10 14.7l-5.1 2.7 1-5.6-4.1-4 5.7-.8z"/></svg>';
 
   function rowHtml(r, i) {
@@ -174,8 +175,8 @@
     var topCount = results.topCount;
     rows.forEach(function (r, i) {
       if (!query && filter === "all" && topCount) {
-        if (i === 0) html += '<li class="group">Favorites and recent</li>';
-        if (i === topCount) html += '<li class="group">All effects</li>';
+        if (i === 0) html += '<li class="group">' + TWIRL + "Favorites and recent</li>";
+        if (i === topCount) html += '<li class="group">' + TWIRL + "All effects</li>";
       }
       html += rowHtml(r, i);
     });
@@ -294,12 +295,21 @@
 
   // ---------- interface (Classic / Minimal / custom) ----------
 
-  function accent(id, label, a1, a2, a3, rgb2) {
+  // Accent colors in the AE look: the action color, the blue-ish value text and the list selection.
+  function accent(id, label, color, value, select, selectLine, onColor) {
     return {
-      id: id, label: label, swatch: "linear-gradient(135deg, " + a1 + ", " + a2 + " 55%, " + a3 + ")",
-      vars: { "--a1": a1, "--a2": a2, "--a3": a3, "--mi-accent": a2, "--mi-glow": "rgba(" + rgb2 + ", 0.14)" }
+      id: id, label: label, swatch: color,
+      vars: { "--accent": color, "--accent-on": onColor || "#ffffff", "--value": value, "--select": select, "--select-line": selectLine }
     };
   }
+  var ACCENTS = [
+    { id: "blue", label: "Blue (After Effects)", swatch: "#2680eb", vars: {} },
+    accent("violet", "Violet", "#7b61ff", "#a493ff", "#3b3560", "#5c4fa8"),
+    accent("teal", "Teal", "#12a594", "#3ccfbd", "#1f4a46", "#2f7a72"),
+    accent("amber", "Amber", "#d9821f", "#f0a54a", "#4f3b22", "#8a6230", "#141414"),
+    accent("pink", "Pink", "#d6456f", "#f0789a", "#4f2a37", "#8a3e58"),
+    accent("graphite", "Graphite", "#8a8a8a", "#d8d8d8", "#3d3d3d", "#5a5a5a", "#141414")
+  ];
 
   MakiInterface.init({
     key: "makifind.interface.v1",
@@ -318,14 +328,7 @@
       classic: { density: "comfortable", show: {} },
       minimal: { density: "compact", show: { count: false, filters: false, refresh: false, groups: false, category: false, stars: false, hints: false } }
     },
-    accents: [
-      { id: "default", label: "Aurora (default)", swatch: "linear-gradient(135deg, #6ee7f9, #a78bfa 55%, #f472b6)", vars: {} },
-      accent("ocean", "Ocean", "#67e8f9", "#3b82f6", "#6366f1", "59, 130, 246"),
-      accent("mint", "Mint", "#86efac", "#2dd4bf", "#38bdf8", "45, 212, 191"),
-      accent("sunset", "Sunset", "#fde68a", "#fb923c", "#f43f5e", "251, 146, 60"),
-      accent("rose", "Rose", "#f9a8d4", "#f472b6", "#c084fc", "244, 114, 182"),
-      accent("mono", "Mono", "#f4f4f5", "#a1a1aa", "#71717a", "161, 161, 170")
-    ]
+    accents: ACCENTS
   });
 
   // ---------- init ----------

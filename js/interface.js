@@ -2,12 +2,13 @@
  * MakiInterface: per-panel interface settings shared by the Makimchi panels.
  * Two presets (Classic = everything, Minimal = only the essentials) plus free customization:
  * which parts are shown, density and accent colour. Saved per panel in localStorage.
+ * The settings window is drawn as an After Effects dialog.
  *
  * Usage: MakiInterface.init({
  *   key, title,
  *   options:  [{ id, label, behavior? }],          // behavior options change logic, not visibility
  *   presets:  { classic: { show, density }, minimal: { show, density } },
- *   accents:  [{ id, label, swatch, vars }],       // first one is the panel's own look
+ *   accents:  [{ id, label, swatch, vars }],       // first one is the default look
  *   mount:    "#selector"                          // where the gear button goes
  * });
  * Hidden parts get the class "ui-hide-<id>" on <html>; density lands in <html data-density>.
@@ -16,24 +17,13 @@
   "use strict";
 
   var GEAR =
-    '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M16.31 8.05 L18.48 8.55 L18.48 11.45 L16.31 11.95 L15.84 13.08 L17.02 14.96 L14.96 17.02 L13.08 15.84 L11.95 16.31 L11.45 18.48 L8.55 18.48 L8.05 16.31 L6.92 15.84 L5.04 17.02 L2.98 14.96 L4.16 13.08 L3.69 11.95 L1.52 11.45 L1.52 8.55 L3.69 8.05 L4.16 6.92 L2.98 5.04 L5.04 2.98 L6.92 4.16 L8.05 3.69 L8.55 1.52 L11.45 1.52 L11.95 3.69 L13.08 4.16 L14.96 2.98 L17.02 5.04 L15.84 6.92Z" stroke-linejoin="round"/><circle cx="10" cy="10" r="2.7"/></svg>';
-  var CLOSE = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15"/></svg>';
-
-  // Little drawings of the two presets for the preset cards.
-  var ART = {
-    classic:
-      '<svg viewBox="0 0 64 40" aria-hidden="true"><rect x="1" y="1" width="62" height="38" rx="5" class="a-frame"/>' +
-      '<rect x="6" y="6" width="22" height="4" rx="2" class="a-dim"/><rect x="44" y="6" width="14" height="4" rx="2" class="a-dim"/>' +
-      '<rect x="6" y="14" width="30" height="20" rx="3" class="a-acc"/><rect x="40" y="14" width="18" height="3" rx="1.5" class="a-dim"/>' +
-      '<rect x="40" y="20" width="14" height="3" rx="1.5" class="a-dim"/><rect x="40" y="26" width="18" height="3" rx="1.5" class="a-dim"/>' +
-      '<rect x="40" y="32" width="10" height="2" rx="1" class="a-dim"/></svg>',
-    minimal:
-      '<svg viewBox="0 0 64 40" aria-hidden="true"><rect x="1" y="1" width="62" height="38" rx="5" class="a-frame"/>' +
-      '<rect x="12" y="9" width="40" height="17" rx="3" class="a-acc"/><rect x="22" y="30" width="20" height="3" rx="1.5" class="a-dim"/></svg>'
-  };
+    '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M8.6 2h2.8l.5 2.3 1.6.7 2-1.3 2 2-1.3 2 .7 1.6 2.3.5v2.8l-2.3.5-.7 1.6 1.3 2-2 2-2-1.3-1.6.7-.5 2.3H8.6l-.5-2.3-1.6-.7-2 1.3-2-2 1.3-2-.7-1.6L.8 11.4V8.6l2.3-.5.7-1.6-1.3-2 2-2 2 1.3 1.6-.7z" stroke-linejoin="round"/><circle cx="10" cy="10" r="2.6"/></svg>';
+  var CLOSE = '<svg viewBox="0 0 10 10" aria-hidden="true"><path d="M1 1l8 8M9 1L1 9"/></svg>';
+  var TICK = '<svg viewBox="0 0 10 8" aria-hidden="true"><path d="M1 4l3 3 5-6"/></svg>';
 
   var cfg = null;
   var state = null;
+  var snapshot = null;
   var listeners = [];
   var sheet = null;
   var gear = null;
@@ -45,6 +35,7 @@
   function store() {
     try { localStorage.setItem(cfg.key, JSON.stringify(state)); } catch (e) { /* storage unavailable */ }
   }
+  function clone(s) { return JSON.parse(JSON.stringify(s)); }
 
   function fromPreset(name) {
     var p = cfg.presets[name];
@@ -105,7 +96,7 @@
     var xml = "<Menu>" + item("mi-classic", "Classic interface", p === "classic") +
       item("mi-minimal", "Minimal interface", p === "minimal") +
       '<MenuItem Label="---"/>' +
-      '<MenuItem Id="mi-open" Label="Customize interface…" Enabled="true" Checked="false"/></Menu>';
+      '<MenuItem Id="mi-open" Label="Interface settings…" Enabled="true" Checked="false"/></Menu>';
     try { cep.invokeSync("setPanelFlyoutMenu", xml); } catch (e) { /* older CEP */ }
   }
 
@@ -129,7 +120,7 @@
     } catch (e) { /* events unavailable */ }
   }
 
-  // ---------- settings sheet ----------
+  // ---------- settings dialog ----------
 
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
 
@@ -145,6 +136,7 @@
       if (!t) return;
       var kind = t.getAttribute("data-mi"), val = t.getAttribute("data-v");
       if (kind === "close") api.close();
+      else if (kind === "cancel") api.cancel();
       else if (kind === "preset") api.usePreset(val);
       else if (kind === "toggle") { state.show[val] = !state.show[val]; apply(); }
       else if (kind === "density") { state.density = val; apply(); }
@@ -152,7 +144,9 @@
       else if (kind === "reset") { state = fromPreset("classic"); state.accent = cfg.accents[0].id; apply(); }
     });
     document.addEventListener("keydown", function (e) {
-      if (e.key === "Escape" && sheet.classList.contains("open")) { e.stopPropagation(); e.preventDefault(); api.close(); }
+      if (!sheet.classList.contains("open")) return;
+      if (e.key === "Escape") { e.stopPropagation(); e.preventDefault(); api.cancel(); }
+      else if (e.key === "Enter") { e.stopPropagation(); e.preventDefault(); api.close(); }
     }, true);
   }
 
@@ -162,36 +156,38 @@
     var looks = cfg.options.filter(function (o) { return !o.behavior; });
     var behaviors = cfg.options.filter(function (o) { return o.behavior; });
 
-    var toggle = function (o) {
-      var on = !!state.show[o.id];
-      return '<button class="mi-row' + (on ? " on" : "") + '" data-mi="toggle" data-v="' + o.id + '" role="switch" aria-checked="' + on + '">' +
-        '<span class="mi-row-label">' + esc(o.label) + "</span>" +
-        '<span class="mi-switch"><span></span></span></button>';
+    var radio = function (name, title, sub) {
+      var on = p === name;
+      return '<button class="mi-opt' + (on ? " on" : "") + '" data-mi="preset" data-v="' + name + '" role="radio" aria-checked="' + on + '">' +
+        '<span class="mi-radio"></span><span class="mi-name">' + title + '</span><span class="mi-sub">' + sub + "</span></button>";
     };
-    var card = function (name, title, sub) {
-      return '<button class="mi-preset' + (p === name ? " on" : "") + '" data-mi="preset" data-v="' + name + '">' +
-        ART[name] + "<b>" + title + "</b><small>" + sub + "</small></button>";
+    var check = function (o) {
+      var on = !!state.show[o.id];
+      return '<button class="mi-opt' + (on ? " on" : "") + '" data-mi="toggle" data-v="' + o.id + '" role="checkbox" aria-checked="' + on + '">' +
+        '<span class="ae-check">' + TICK + '</span><span class="mi-name">' + esc(o.label) + "</span></button>";
     };
 
     sheet.firstChild.innerHTML =
-      '<header class="mi-head"><div><b>Interface</b><small>' + esc(cfg.title) + "</small></div>" +
-      '<button class="mi-icon" data-mi="close" title="Close (Esc)">' + CLOSE + "</button></header>" +
+      '<header class="mi-title"><span>Interface<em>' + esc(cfg.title) + "</em></span>" +
+      '<button class="mi-x" data-mi="cancel" aria-label="Close">' + CLOSE + "</button></header>" +
       '<div class="mi-body">' +
-      '<div class="mi-presets">' + card("classic", "Classic", "Everything in view") + card("minimal", "Minimal", "Only the essentials") + "</div>" +
-      (p === "custom" ? '<div class="mi-custom">Custom setup · based on your choices below</div>' : "") +
-      '<div class="mi-label">Show</div><div class="mi-list">' + looks.map(toggle).join("") + "</div>" +
-      (behaviors.length ? '<div class="mi-label">Behavior</div><div class="mi-list">' + behaviors.map(toggle).join("") + "</div>" : "") +
-      '<div class="mi-label">Density</div>' +
-      '<div class="mi-seg">' +
+      '<div class="mi-label">Preset</div><div class="mi-group" role="radiogroup">' +
+      radio("classic", "Classic", "everything in view") + radio("minimal", "Minimal", "only the essentials") +
+      (p === "custom" ? '<div class="mi-opt on mi-static"><span class="mi-radio"></span><span class="mi-name">Custom</span><span class="mi-sub">your own mix</span></div>' : "") +
+      "</div>" +
+      '<div class="mi-label">Show</div><div class="mi-group">' + looks.map(check).join("") + "</div>" +
+      (behaviors.length ? '<div class="mi-label">Behavior</div><div class="mi-group">' + behaviors.map(check).join("") + "</div>" : "") +
+      '<div class="mi-line"><span class="mi-line-label">Density</span><div class="ae-seg mi-density">' +
       '<button data-mi="density" data-v="comfortable" class="' + (state.density === "comfortable" ? "on" : "") + '">Comfortable</button>' +
-      '<button data-mi="density" data-v="compact" class="' + (state.density === "compact" ? "on" : "") + '">Compact</button></div>' +
-      '<div class="mi-label">Accent</div><div class="mi-accents">' +
+      '<button data-mi="density" data-v="compact" class="' + (state.density === "compact" ? "on" : "") + '">Compact</button></div></div>' +
+      '<div class="mi-line"><span class="mi-line-label">Accent</span><div class="mi-accents">' +
       cfg.accents.map(function (a) {
         return '<button class="mi-swatch' + (state.accent === a.id ? " on" : "") + '" data-mi="accent" data-v="' + a.id +
-          '" title="' + esc(a.label) + '" style="background:' + a.swatch + '"></button>';
-      }).join("") + "</div>" +
+          '" title="' + esc(a.label) + '" aria-label="' + esc(a.label) + '" style="background:' + a.swatch + '"></button>';
+      }).join("") + "</div></div>" +
       "</div>" +
-      '<footer class="mi-foot"><span>Saved for this panel</span><button class="mi-link" data-mi="reset">Reset</button></footer>';
+      '<footer class="mi-foot"><button class="mi-link" data-mi="reset">Reset</button><span class="mi-spacer"></span>' +
+      '<button class="ae-btn" data-mi="cancel">Cancel</button><button class="ae-btn primary" data-mi="close">OK</button></footer>';
   }
 
   // ---------- public API ----------
@@ -223,6 +219,7 @@
         gear.type = "button";
         gear.className = "mi-gear";
         gear.title = "Interface: Classic, Minimal or your own";
+        gear.setAttribute("aria-label", "Interface settings");
         gear.innerHTML = GEAR;
         gear.addEventListener("mousedown", function (e) { e.preventDefault(); e.stopPropagation(); });
         gear.addEventListener("click", function (e) { e.preventDefault(); e.stopPropagation(); api.open(); });
@@ -240,8 +237,13 @@
       state.accent = accent;
       apply();
     },
-    open: function () { renderSheet(); sheet.classList.add("open"); },
-    close: function () { sheet.classList.remove("open"); },
+    open: function () { snapshot = clone(state); renderSheet(); sheet.classList.add("open"); },
+    close: function () { snapshot = null; sheet.classList.remove("open"); },
+    // Cancel puts back what was there when the dialog opened.
+    cancel: function () {
+      if (snapshot) { state = snapshot; snapshot = null; apply(); }
+      sheet.classList.remove("open");
+    },
     onChange: function (fn) { listeners.push(fn); }
   };
 
